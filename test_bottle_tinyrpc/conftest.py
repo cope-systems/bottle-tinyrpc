@@ -30,8 +30,17 @@ def tinyrpc_protocol():
 
 
 @pytest.fixture
-def tinyrpc_plugin(endpoint, tinyrpc_protocol):
-    plugin = TinyRPCPlugin(endpoint, protocol=tinyrpc_protocol())
+def tinyrpc_mimetype():
+    return "application/json"
+
+
+@pytest.fixture
+def tinyrpc_plugin(endpoint, tinyrpc_protocol, tinyrpc_mimetype):
+    plugin = TinyRPCPlugin(
+        endpoint,
+        protocol=tinyrpc_protocol(),
+        mimetype=tinyrpc_mimetype
+    )
 
     @plugin.public
     def foo(a, b):
@@ -40,6 +49,10 @@ def tinyrpc_plugin(endpoint, tinyrpc_protocol):
     @plugin.public
     def bar(a, b, c):
         return "wat"
+
+    @plugin.public
+    def fails(a):
+        raise IOError("huh")
 
     return plugin
 
